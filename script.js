@@ -1,80 +1,126 @@
-let users = [
-    { id: 1, name: "John", age: "18", profession: "developer" },
-    { id: 2, name: "Jack", age: "20", profession: "developer" },
-    { id: 3, name: "Karen", age: "19", profession: "admin" }
-  ];
-  
-  // Function to render user cards
-  function renderUserCards(users) {
-    const userList = document.getElementById("userList");
-    userList.innerHTML = "";
-  
-    users.forEach(user => {
-      const userCard = document.createElement("div");
-      userCard.className = "userCard";
-  
-     const id = document.createElement("p");
-     id.textContent =  user.id;
+const selectBtn = document.querySelector(".buttonSelect");
+const select = document.querySelector("#dropdown");
+const options = document.querySelectorAll(".option");
+const selectLabel = document.querySelector("#select-label");
+const filterButton = document.querySelector(".filterBtn");
+const resetButton = document.querySelector(".resetBtn");
 
-      const name = document.createElement("p");
-      name.textContent = `Name: ${user.name}`;
-  
-      const age = document.createElement("p");
-      age.textContent = `Age: ${user.age}`;
-  
-      const profession = document.createElement("p");
-      profession.textContent = `Profession: ${user.profession}`;
-  
-      userCard.appendChild(id);
-      userCard.appendChild(name);
-      userCard.appendChild(age);
-      userCard.appendChild(profession);
-  
-      userList.appendChild(userCard);
-    });
-  }
-  
-  // Function to filter users by profession
-  function filterUsersByProfession(profession) {
-     
-    const filteredUsers = users.filter(user => user.profession === profession);
-    renderUserCards(filteredUsers);
-  }
-  
-  // Event listener for filter button
-  document.getElementById("filterBtn").addEventListener("click", () => {
-    const professionSelect = document.getElementById("profession");
-    const selectedProfession = professionSelect.value;
-    filterUsersByProfession(selectedProfession);
+selectBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  toggleHidden();
+});
+
+function toggleHidden() {
+  select.classList.toggle("hidden");
+}
+
+let selectedOption = "profession";
+
+options.forEach(function (option) {
+  option.addEventListener("click", function (e) {
+    setSelectTitle(e);
   });
-  
-  // Event listener for add user button
-  document.getElementById("addUserBtn").addEventListener("click", () => {
-    const nameInput = document.getElementById("name");
-    const ageInput = document.getElementById("age");
-    const professionSelect = document.getElementById("addProfession");
-  
-    const name = nameInput.value;
-    const age = ageInput.value;
-    const profession = professionSelect.value;
-  
-    if (name === "" || age === "" || profession === "") {
-      alert("Please enter all the user details before clicking the add button.");
-      return;
-    }
-  
-    const newUser = {
-      id: users.length + 1,
-      name: name,
-      age: age,
-      profession: profession
-    };
-  
-    users.push(newUser);
-    renderUserCards(users);
-  
-    // Reset input fields
-    nameInput.value = "";
-    ageInput.value = "";
-    professionSelect.value = "";
-  });
+});
+
+function setSelectTitle(e) {
+  const element = document.querySelector(`label[for="${e.target.id}"]`);
+  const labelElement = element.innerHTML;
+  selectLabel.innerText = labelElement;
+  selectedOption = element.id;
+  toggleHidden();
+}
+
+filterButton.addEventListener("click", () => {
+  if (selectedOption === "profession") {
+    alert("Please select a profession.");
+  } else {
+    let tmpData = data.filter((item) => item.profession === selectedOption);
+    displayOutput(tmpData);
+  }
+});
+
+
+let data = [
+  { id: 1, name: "john", age: "18", profession: "developer" },
+  { id: 2, name: "jack", age: "20", profession: "developer" },
+  { id: 3, name: "karen", age: "19", profession: "admin" },
+];
+
+const outputDiv = document.querySelector(".res");
+
+function displayOutput(arr) {
+  outputDiv.innerHTML = "";
+  for (let i = 0; i < arr.length; i++) {
+    createResultDiv(arr[i]);
+  }
+}
+
+displayOutput(data);
+function createResultDiv(item) {
+  let resDiv = document.createElement("div");
+  let pId = document.createElement("p");
+  let pName = document.createElement("p");
+  let pPro = document.createElement("p");
+  let pAge = document.createElement("p");
+
+  resDiv.className = "res-item";
+  pId.textContent = item.id;
+
+  pName.textContent = "Name: " + item.name;
+  pAge.textContent = "Age: " + item.age;
+  pPro.textContent = "Profession: " + item.profession;
+  resDiv.appendChild(pId);
+  resDiv.appendChild(pName);
+  resDiv.appendChild(pPro);
+  resDiv.appendChild(pAge);
+
+  outputDiv.appendChild(resDiv);
+}
+
+
+
+const inputNameElement = document.getElementById("name");
+const inputProfessionElement = document.getElementById("profession");
+const inputAgeElement = document.getElementById("age");
+
+const addButton = document.querySelector(".addBtn");
+
+inputNameElement.addEventListener("change", function () {
+  let enteredValue = inputNameElement.value;
+
+  inputNameElement.value = enteredValue;
+});
+inputProfessionElement.addEventListener("change", function () {
+  let enteredValue = inputProfessionElement.value;
+
+  inputProfessionElement.value = enteredValue;
+});
+inputAgeElement.addEventListener("change", function () {
+  let enteredValue = inputAgeElement.value;
+
+  inputAgeElement.value = enteredValue;
+});
+
+let id = 4;
+addButton.addEventListener("click", () => {
+  addUser(
+    id++,
+    inputNameElement.value,
+    inputProfessionElement.value,
+    inputAgeElement.value
+  );
+});
+
+function addUser(id, name, profession, age) {
+  profession = profession.toLowerCase();
+  name = name.toLowerCase();
+
+  if (profession === "developer" || profession === "admin") {
+    const obj = { id: id, name: name, age: age, profession: profession };
+
+    data.push(obj);
+    displayOutput(data);
+  } else {
+    alert("Please enter correct profession.");
+  }
+}
